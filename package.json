@@ -1,0 +1,23 @@
+{
+  "name": "yandex-5-bukvy",
+  "version": "1.0.0",
+  "description": "Русскоязычная игра в слова из 5 букв (аналог Wordle)",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "wordle",
+    "russian",
+    "word-game",
+    "5-letters",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}

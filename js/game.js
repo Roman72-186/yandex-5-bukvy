@@ -15,15 +15,16 @@ class FiveLetterGame {
     this.targetWord = getRandomWord().toUpperCase();
     this.currentRow = 0;
     this.currentCol = 0;
-    this.isProcessing = false; // Явный сброс флага обработки
-    this.gameOver = false; // Явный сброс флага окончания игры
+    this.isProcessing = false;
+    this.gameOver = false;
+    this.gameStartTime = Date.now(); // Запоминаем время начала игры
 
     if (this.targetWord === '') {
-        this.gameOver = true; // Блокируем игру, только если слово не было получено
+        this.gameOver = true;
         console.error("Не удалось получить слово для начала игры. Игра заблокирована.");
         this.ui.showMessage("Ошибка: не удалось загрузить слово. Попробуйте обновить страницу.", false);
     }
-    
+
     console.log('State after reset:', {
       targetWord: this.targetWord,
       gameOver: this.gameOver,
@@ -97,14 +98,47 @@ class FiveLetterGame {
     if (guess === this.targetWord) {
       this.gameOver = true;
       this.ui.showMessage('Поздравляем! Вы угадали слово!', true);
+      await this.sendGameResult(true, this.currentRow + 1);
     } else if (this.currentRow === MAX_ATTEMPTS - 1) {
       this.gameOver = true;
       this.ui.showMessage(`Вы проиграли. Загаданное слово: ${this.targetWord}`, false);
+      await this.sendGameResult(false, MAX_ATTEMPTS);
     } else {
       this.currentRow++;
       this.currentCol = 0;
     }
     this.isProcessing = false;
+  }
+
+  async sendGameResult(isWin, attempts) {
+    const gameEndTime = Date.now();
+    const gameDuration = Math.round((gameEndTime - this.gameStartTime) / 1000); // в секундах
+
+    const gameData = {
+      result: isWin ? 'win' : 'lose',
+      word: this.targetWord,
+      attempts: attempts,
+      duration: gameDuration,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch('/api/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(gameData)
+      });
+
+      if (response.ok) {
+        console.log('Game result sent successfully:', gameData);
+      } else {
+        console.error('Failed to send game result:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error sending game result:', error);
+    }
   }
   
   getCurrentGuess() {
