@@ -19,16 +19,20 @@
 2. Импортируйте проект в Vercel: [vercel.com/new](https://vercel.com/new)
 3. (Опционально) Добавьте переменную окружения `WEBHOOK_URL` для отправки статистики
 
-### Настройка вебхука
+### Настройка вебхука для WatBot
 
-Если хотите получать статистику игр на внешний сервис:
+**ВАЖНО:** Для работы интеграции необходимо настроить переменную окружения на Vercel:
 
-1. В настройках проекта Vercel перейдите в **Environment Variables**
-2. Добавьте переменную:
+1. Откройте ваш проект на [vercel.com](https://vercel.com)
+2. Перейдите в **Settings** → **Environment Variables**
+3. Добавьте новую переменную:
    - **Name**: `WEBHOOK_URL`
-   - **Value**: URL вашего вебхука
+   - **Value**: `https://api.watbot.ru/hook/4314816:grtpp1TiasmHrrcqJQJbOdsVQ3OzY1Awd0F02Jz2tTyqD8HS`
+   - **Environment**: Production, Preview, Development (выберите все)
+4. Нажмите **Save**
+5. Сделайте **Redeploy** проекта для применения изменений
 
-#### Примеры вебхуков:
+#### Другие примеры вебхуков:
 
 **Discord:**
 ```
