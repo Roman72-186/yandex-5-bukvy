@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const gameData = req.body;
 
     // Валидация данных
-    if (!gameData.result || !gameData.word || !gameData.attempts) {
+    if (!gameData.result || !gameData.word || !gameData.attempts || !gameData.telegram_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -20,16 +20,22 @@ export default async function handler(req, res) {
     const webhookUrl = process.env.WEBHOOK_URL;
 
     if (webhookUrl) {
-      // Отправляем данные на внешний вебхук
+      // Отправляем данные на WatBot вебхук
+      const watbotPayload = {
+        telegram_id: gameData.telegram_id,
+        result: gameData.result,
+        word: gameData.word,
+        attempts: gameData.attempts,
+        duration: gameData.duration,
+        timestamp: gameData.timestamp
+      };
+
       const webhookResponse = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          text: formatGameResult(gameData),
-          data: gameData
-        })
+        body: JSON.stringify(watbotPayload)
       });
 
       if (!webhookResponse.ok) {
@@ -50,20 +56,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-}
-
-// Форматирование результата игры для отправки в вебхук
-function formatGameResult(data) {
-  const resultEmoji = data.result === 'win' ? '✅' : '❌';
-  const resultText = data.result === 'win' ? 'Победа' : 'Поражение';
-
-  return `
-🎮 **Результат игры "5 букв"**
-
-${resultEmoji} **${resultText}**
-📝 Слово: **${data.word}**
-🎯 Попыток: **${data.attempts}/6**
-⏱️ Время: **${data.duration} сек**
-🕐 Дата: ${new Date(data.timestamp).toLocaleString('ru-RU')}
-  `.trim();
 }

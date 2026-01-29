@@ -7,8 +7,14 @@ const MAX_ATTEMPTS = 6;
 class FiveLetterGame {
   constructor() {
     this.ui = new UIController(WORD_LENGTH, MAX_ATTEMPTS);
+    this.telegramId = this.getTelegramIdFromUrl();
     this.resetState();
     this.attachEventListeners();
+  }
+
+  getTelegramIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('telegram_id') || null;
   }
 
   resetState() {
@@ -119,7 +125,8 @@ class FiveLetterGame {
       word: this.targetWord,
       attempts: attempts,
       duration: gameDuration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      telegram_id: this.telegramId
     };
 
     try {

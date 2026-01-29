@@ -51,6 +51,7 @@ https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage?chat_id=YOUR_CHAT_ID
 
 ```json
 {
+  "telegram_id": "123456789",
   "result": "win|lose",
   "word": "СЛОВО",
   "attempts": 3,
@@ -58,6 +59,15 @@ https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage?chat_id=YOUR_CHAT_ID
   "timestamp": "2025-01-29T12:00:00.000Z"
 }
 ```
+
+### WatBot интеграция
+
+Игра интегрирована с WatBot. URL мини-приложения должен содержать параметр `telegram_id`:
+```
+https://yandex-5-bukvy.vercel.app/?telegram_id={{telegram_id}}
+```
+
+Результаты игры автоматически отправляются на WatBot вебхук.
 
 ## 🎮 Как играть
 
