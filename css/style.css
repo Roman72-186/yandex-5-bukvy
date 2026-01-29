@@ -1,0 +1,260 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+  --color-correct: #4CAF50;
+  --color-present: #FFC107;
+  --color-absent: #999999;
+  --color-default-key: #D3D6DA;
+  --font-color: #000000;
+  --border-color: #CCCCCC;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 500px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 5px;
+    margin-bottom: 30px;
+    align-items: center;
+    justify-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 5px;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border-color);
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.cell.filled {
+    border-color: var(--color-absent);
+}
+
+.status-correct {
+  background-color: var(--color-correct);
+  color: white;
+}
+
+.status-present {
+  background-color: var(--color-present);
+  color: white;
+}
+
+.status-absent {
+  background-color: var(--color-absent);
+  color: white;
+}
+
+.cell.correct {
+    border-color: var(--color-correct);
+}
+
+.cell.present {
+    border-color: var(--color-present);
+}
+
+.cell.absent {
+    border-color: var(--color-absent);
+}
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.key {
+    flex: 1;
+    min-width: 40px;
+    height: 50px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.key:hover {
+    background-color: #e0e0e0;
+}
+
+.key.wide {
+    flex: 2.5;
+    font-size: 0.75rem;
+}
+
+.key.correct {
+    background-color: var(--color-correct);
+    color: white;
+    border-color: var(--color-correct);
+}
+
+.key.present {
+    background-color: var(--color-present);
+    color: white;
+    border-color: var(--color-present);
+}
+
+.key.absent {
+    background-color: var(--color-absent);
+    color: white;
+    border-color: var(--color-absent);
+}
+
+footer {
+    margin-top: 20px;
+}
+
+#new-game-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#new-game-button:hover {
+    background-color: #ffb300;
+}
+
+@media (max-width: 768px) {
+  .cell {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+  .key {
+    height: 45px;
+    font-size: 0.85rem;
+    min-width: 35px;
+  }
+  .key.wide {
+    font-size: 0.65rem;
+  }
+  header h1 {
+    font-size: 2rem;
+  }
+  header p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+    .cell {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+
+    .key {
+        min-width: 28px;
+        height: 40px;
+        font-size: 0.75rem;
+    }
+
+    .key.wide {
+        font-size: 0.6rem;
+        flex: 2;
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+    }
+
+    header p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .cell {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+
+    .key {
+        min-width: 24px;
+        height: 38px;
+        font-size: 0.7rem;
+    }
+
+    .key.wide {
+        font-size: 0.55rem;
+        flex: 1.8;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header p {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+
+    .game-board {
+        margin-bottom: 20px;
+    }
+}
