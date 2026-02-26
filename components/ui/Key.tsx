@@ -19,8 +19,8 @@ const Key: React.FC<KeyProps> = ({ char, onClick, disabled = false, status, wide
     <button
       className={
         wide
-          ? 'flex items-center justify-center rounded-md border-2 border-blue-400 font-bold text-xs sm:text-sm min-w-[48px] h-10 sm:min-w-[60px] sm:h-12 px-2 transition-colors duration-200 select-none'
-          : 'flex items-center justify-center rounded-md border border-gray-300 font-bold text-sm sm:text-base min-w-[28px] h-10 sm:min-w-[36px] sm:h-12 px-1 transition-colors duration-200 select-none'
+          ? 'flex items-center justify-center rounded-md border-2 border-blue-400 font-bold text-sm sm:text-base min-w-[56px] h-12 sm:min-w-[72px] sm:h-14 px-2 transition-colors duration-200 select-none'
+          : 'flex items-center justify-center rounded-md border border-gray-300 font-bold text-base sm:text-lg min-w-[32px] h-12 sm:min-w-[40px] sm:h-14 px-1 transition-colors duration-200 select-none'
       }
       style={{
         backgroundColor: wide ? '#3b82f6' : bgColor,

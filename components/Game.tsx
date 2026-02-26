@@ -83,8 +83,8 @@ const Game: React.FC = () => {
   const keyboardRows = [
     ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х'],
     ['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э'],
-    ['Enter', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', 'Backspace'], // Enter и Backspace
- ];
+    ['я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю'],
+  ];
 
   const getKeyStatus = (key: string): typeof CELL_STATUS[keyof typeof CELL_STATUS] => {
     if (key === 'Enter' || key === 'Backspace') return CELL_STATUS.UNCHECKED;
@@ -143,15 +143,64 @@ const Game: React.FC = () => {
             {row.map((key) => (
               <Key
                 key={key}
-                char={key === 'Backspace' ? '⌫' : key === 'Enter' ? 'ВВОД' : key}
+                char={key}
                 onClick={() => handleKeyPress(key)}
                 status={getKeyStatus(key.toLowerCase())}
                 disabled={gameOver}
-                wide={key === 'Enter' || key === 'Backspace'}
               />
             ))}
           </div>
         ))}
+
+        {/* Ряд управления: ВВОД / Играть снова / ⌫ */}
+        <div className="flex justify-center gap-2 mt-1">
+          <button
+            className="flex-1 h-[48px] sm:h-[52px] rounded-md font-bold text-sm sm:text-base transition-colors duration-200 select-none"
+            style={{
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              opacity: gameOver ? 0.5 : 1,
+              cursor: gameOver ? 'not-allowed' : 'pointer',
+              border: '2px solid #60a5fa',
+            }}
+            onClick={() => handleKeyPress('Enter')}
+            disabled={gameOver}
+          >
+            ВВОД
+          </button>
+
+          {gameOver ? (
+            <button
+              className="flex-1 h-[48px] sm:h-[52px] rounded-md font-bold text-sm sm:text-base transition-colors duration-200 select-none"
+              style={{
+                backgroundColor: '#c9a84c',
+                color: '#1a1a2e',
+                border: '2px solid #d4b85c',
+                cursor: 'pointer',
+              }}
+              onClick={resetGame}
+            >
+              ИГРАТЬ СНОВА
+            </button>
+          ) : (
+            <div className="flex-1" />
+          )}
+
+          <button
+            className="flex-1 h-[48px] sm:h-[52px] rounded-md font-bold text-lg sm:text-xl transition-colors duration-200 select-none"
+            style={{
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              opacity: gameOver ? 0.5 : 1,
+              cursor: gameOver ? 'not-allowed' : 'pointer',
+              border: '2px solid #60a5fa',
+            }}
+            onClick={() => handleKeyPress('Backspace')}
+            disabled={gameOver}
+          >
+            ⌫
+          </button>
+        </div>
       </div>
 
       {gameOver && (
@@ -159,10 +208,6 @@ const Game: React.FC = () => {
           Поделиться результатом
         </button>
       )}
-
-      <button onClick={resetGame} style={{ ...secondaryButtonStyle, marginTop: '0.5rem' }}>
-        Играть снова
-      </button>
 
       <Modal isOpen={showModal} onClose={handleCloseMessageModal} title="Сообщение">
         <p>{message}</p>
