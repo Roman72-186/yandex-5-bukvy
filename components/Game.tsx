@@ -133,7 +133,19 @@ const Game: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center p-4 max-w-lg mx-auto">
-      <h1 style={{ color: 'var(--text-color)' }} className="text-3xl font-bold mb-4">5Букв</h1>
+      <h1
+        className="text-3xl font-bold mb-4 px-6 py-2 rounded-xl select-none"
+        style={{
+          background: 'linear-gradient(135deg, #c9a84c 0%, #e8d48b 50%, #c9a84c 100%)',
+          color: '#1a1a2e',
+          boxShadow: '0 4px 15px rgba(201, 168, 76, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+          letterSpacing: '0.05em',
+          textShadow: '0 1px 0 rgba(255,255,255,0.2)',
+          border: '1px solid rgba(201, 168, 76, 0.5)',
+        }}
+      >
+        5Букв
+      </h1>
       <Grid guesses={guesses} currentGuess={currentGuess} maxLength={5} />
 
       {/* Клавиатура */}
