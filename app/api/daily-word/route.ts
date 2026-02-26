@@ -1,20 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getDailyWordForDate } from '../../../services/gameService';
+import { getDailyWord } from '../../../lib/words';
 
 export async function GET() {
   try {
     const today = new Date();
-    const dailyWord = await getDailyWordForDate(today);
-
-    if (!dailyWord) {
-      return NextResponse.json(
-        { error: 'Слово дня не найдено' },
-        { status: 404 }
-      );
-    }
+    const word = getDailyWord(today);
 
     return NextResponse.json({
-      word: dailyWord.word,
+      word,
       date: today.toISOString().split('T')[0],
     });
   } catch (error) {
