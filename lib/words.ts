@@ -34,8 +34,9 @@ export function getDailyWord(date: Date): string {
 }
 
 /**
- * Возвращает все слова словаря
+ * Возвращает случайное слово из словаря
  */
-export function getAllWords(): string[] {
-  return words;
+export function getRandomWord(): string {
+  const index = Math.floor(Math.random() * words.length);
+  return words[index];
 }

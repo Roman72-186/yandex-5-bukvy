@@ -1,15 +1,19 @@
 // app/api/guess/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { processGuess, GuessInputSchema } from '../../../services/gameService';
+import { processGuess } from '../../../services/gameService';
 import { z } from 'zod';
+
+const RequestSchema = z.object({
+  word: z.string().min(5).max(5).regex(/^[а-яА-ЯёЁa-zA-Z]+$/),
+  target: z.string().min(5).max(5),
+});
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const { word, target } = RequestSchema.parse(body);
 
-    const validatedBody = GuessInputSchema.parse(body);
-
-    const result = processGuess(validatedBody.word);
+    const result = processGuess(word, target);
 
     if (!result.isValid) {
       return NextResponse.json(

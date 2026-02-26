@@ -1,17 +1,14 @@
-import { NextResponse } from 'next/server';
-import { getDailyWord } from '../../../lib/words';
+import { NextRequest, NextResponse } from 'next/server';
+import { getDailyWord, getRandomWord } from '../../../lib/words';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const today = new Date();
-    const word = getDailyWord(today);
+    const random = request.nextUrl.searchParams.get('random');
+    const word = random ? getRandomWord() : getDailyWord(new Date());
 
-    return NextResponse.json({
-      word,
-      date: today.toISOString().split('T')[0],
-    });
+    return NextResponse.json({ word });
   } catch (error) {
-    console.error('Error fetching daily word:', error);
+    console.error('Error fetching word:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

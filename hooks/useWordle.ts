@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { WordResult, CELL_STATUS, GAME_CONFIG } from '../lib/constants';
 
 interface MessageState {
@@ -14,12 +14,14 @@ export const useWordle = () => {
   const [targetWord, setTargetWord] = useState<string>('');
   const [message, setMessageState] = useState<MessageState>({ text: '', isVisible: false });
   const [loading, setLoading] = useState<boolean>(true);
+  const isFirstGame = useRef(true);
 
-  const fetchTargetWord = useCallback(async () => {
+  const fetchTargetWord = useCallback(async (random: boolean = false) => {
     try {
-      const response = await fetch('/api/daily-word');
+      const url = random ? '/api/daily-word?random=true' : '/api/daily-word';
+      const response = await fetch(url);
       if (!response.ok) {
-        throw new Error('Failed to fetch daily word');
+        throw new Error('Failed to fetch word');
       }
       const data = await response.json();
       setTargetWord(data.word);
@@ -32,7 +34,7 @@ export const useWordle = () => {
   }, []);
 
   useEffect(() => {
-    fetchTargetWord();
+    fetchTargetWord(false); // первая игра — слово дня
   }, [fetchTargetWord]);
 
   const handleChar = useCallback((char: string) => {
@@ -56,7 +58,7 @@ export const useWordle = () => {
       const response = await fetch('/api/guess', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ word: currentGuess }),
+        body: JSON.stringify({ word: currentGuess, target: targetWord }),
       });
 
       const data = await response.json();
@@ -102,7 +104,8 @@ export const useWordle = () => {
     setGameWon(false);
     setMessageState({ text: '', isVisible: false });
     setLoading(true);
-    fetchTargetWord();
+    isFirstGame.current = false;
+    fetchTargetWord(true); // повторные игры — случайное слово
   }, [fetchTargetWord]);
 
   const setMessage = useCallback((text: string) => {

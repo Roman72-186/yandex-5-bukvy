@@ -71,7 +71,7 @@ export const GuessInputSchema = z.object({
 /**
  * Обрабатывает попытку угадывания слова.
  */
-export function processGuess(word: string, targetDate: Date = new Date()): {
+export function processGuess(word: string, target: string): {
   isValid: boolean;
   result?: WordResult;
   error?: string;
@@ -87,10 +87,7 @@ export function processGuess(word: string, targetDate: Date = new Date()): {
       };
     }
 
-    const dailyWordObj = getDailyWordForDate(targetDate);
-    const targetWord = dailyWordObj.word;
-
-    const result = calculateGuessResult(validatedInput.word, targetWord);
+    const result = calculateGuessResult(validatedInput.word, target);
 
     return {
       isValid: true,
