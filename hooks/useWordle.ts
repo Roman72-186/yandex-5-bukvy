@@ -34,7 +34,7 @@ export const useWordle = () => {
   }, []);
 
   useEffect(() => {
-    fetchTargetWord(false); // первая игра — слово дня
+    fetchTargetWord(true); // всегда случайное слово
   }, [fetchTargetWord]);
 
   const handleChar = useCallback((char: string) => {
