@@ -1,6 +1,5 @@
 // components/ui/Modal.tsx
 import React, { useEffect, useRef } from 'react';
-import clsx from 'clsx';
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,7 +11,6 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Закрытие модального окна при клике вне его области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -22,21 +20,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Блокировка прокрутки фона
       document.body.style.overflow = 'hidden';
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
     }
 
-    // Cleanup при размонтировании
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
-  // Закрытие по Escape
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -58,24 +53,49 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 50,
+        padding: '1rem',
+      }}
+    >
       <div
         ref={modalRef}
-        className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform transition-transform duration-300 ease-out scale-100"
+        style={{
+          backgroundColor: 'var(--secondary-bg-color)',
+          color: 'var(--text-color)',
+          borderRadius: '12px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+          width: '100%',
+          maxWidth: '400px',
+          padding: '1.5rem',
+        }}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{title}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-color)' }}>{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            style={{
+              color: 'var(--hint-color)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+            }}
             aria-label="Close modal"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <div className="modal-body">
+        <div style={{ color: 'var(--text-color)' }}>
           {children}
         </div>
       </div>

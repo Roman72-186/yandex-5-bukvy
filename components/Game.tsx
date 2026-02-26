@@ -116,9 +116,24 @@ const Game: React.FC = () => {
     }
   };
 
+  const buttonStyle: React.CSSProperties = {
+    backgroundColor: 'var(--button-color)',
+    color: 'var(--button-text-color)',
+    padding: '0.5rem 1rem',
+    borderRadius: '8px',
+    border: 'none',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  };
+
+  const secondaryButtonStyle: React.CSSProperties = {
+    ...buttonStyle,
+    backgroundColor: 'var(--hint-color)',
+  };
+
   return (
     <div className="flex flex-col items-center p-4 max-w-lg mx-auto">
-      <h1 className="text-3xl font-bold mb-4">5Букв</h1>
+      <h1 style={{ color: 'var(--text-color)' }} className="text-3xl font-bold mb-4">5Букв</h1>
       <Grid guesses={guesses} currentGuess={currentGuess} maxLength={5} />
 
       {/* Клавиатура */}
@@ -139,51 +154,32 @@ const Game: React.FC = () => {
         ))}
       </div>
 
-      {/* Кнопка "Поделиться" появляется после окончания игры */}
       {gameOver && (
-        <button
-          onClick={handleShowShareModal}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
+        <button onClick={handleShowShareModal} style={{ ...buttonStyle, marginTop: '1rem' }}>
           Поделиться результатом
         </button>
       )}
 
-      <button
-        onClick={resetGame}
-        className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-      >
+      <button onClick={resetGame} style={{ ...secondaryButtonStyle, marginTop: '0.5rem' }}>
         Играть снова
       </button>
 
-      {/* Модальное окно для сообщений */}
-      {/* isOpen теперь зависит от showModal из хука, onClose использует closeModal из хука */}
       <Modal isOpen={showModal} onClose={handleCloseMessageModal} title="Сообщение">
         <p>{message}</p>
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={handleCloseMessageModal}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={handleCloseMessageModal} style={buttonStyle}>
             OK
           </button>
         </div>
       </Modal>
 
-      {/* Модальное окно для шаринга */}
       <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} title="Поделиться результатом">
-        <pre className="whitespace-pre-wrap break-words">{shareText}</pre>
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={() => setShowShareModal(false)}
-            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-          >
+        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{shareText}</pre>
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <button onClick={() => setShowShareModal(false)} style={secondaryButtonStyle}>
             Закрыть
           </button>
-          <button
-            onClick={handleCopyShareText}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+          <button onClick={handleCopyShareText} style={buttonStyle}>
             Скопировать
           </button>
         </div>
