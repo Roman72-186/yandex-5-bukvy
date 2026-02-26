@@ -1,30 +1,33 @@
-// components/ui/Key.tsx
+'use client';
+
 import React from 'react';
-import { CELL_COLORS, CellStatus } from '../../lib/constants';
-import clsx from 'clsx'; // Используем clsx для удобного объединения классов
+import { CELL_COLORS, CELL_TEXT_COLORS, CellStatus } from '../../lib/constants';
 
 interface KeyProps {
   char: string;
   onClick: () => void;
   disabled?: boolean;
- status?: CellStatus; // Статус для изменения цвета
+  status?: CellStatus;
+  wide?: boolean;
 }
 
-const Key: React.FC<KeyProps> = ({ char, onClick, disabled = false, status }) => {
-  const bgColor = status ? CELL_COLORS[status] : 'bg-gray-200';
-  const hoverBgColor = status ? CELL_COLORS[status] : 'hover:bg-gray-300';
+const Key: React.FC<KeyProps> = ({ char, onClick, disabled = false, status, wide = false }) => {
+  const bgColor = status ? CELL_COLORS[status] : '#e5e7eb';
+  const textColor = status ? CELL_TEXT_COLORS[status] : '#000000';
 
   return (
     <button
-      className={clsx(
-        'flex items-center justify-center rounded-md border border-gray-300 font-bold text-lg w-12 h-12 transition-colors duration-200',
-        bgColor,
-        hoverBgColor,
-        {
-          'opacity-50 cursor-not-allowed': disabled,
-          'active:scale-95': !disabled, // Анимация нажатия
-        }
-      )}
+      className={
+        wide
+          ? 'flex items-center justify-center rounded-md border-2 border-blue-400 font-bold text-xs sm:text-sm min-w-[48px] h-10 sm:min-w-[60px] sm:h-12 px-2 transition-colors duration-200 select-none'
+          : 'flex items-center justify-center rounded-md border border-gray-300 font-bold text-sm sm:text-base min-w-[28px] h-10 sm:min-w-[36px] sm:h-12 px-1 transition-colors duration-200 select-none'
+      }
+      style={{
+        backgroundColor: wide ? '#3b82f6' : bgColor,
+        color: wide ? '#ffffff' : textColor,
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      }}
       onClick={onClick}
       disabled={disabled}
       aria-label={`Key ${char}`}

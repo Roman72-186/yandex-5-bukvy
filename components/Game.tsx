@@ -1,19 +1,17 @@
-// components/Game.tsx
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Grid from './ui/Grid';
 import Key from './ui/Key';
 import Modal from './ui/Modal';
 import { CELL_STATUS } from '../lib/constants';
 import { useWordle } from '../hooks/useWordle'; // Импортируем хук
-import TelegramWebApp from '@twa-dev/sdk'; // Импорт SDK для Telegram WebApp
-
-// Заглушка удалена
-
-
 declare global {
   interface Window {
-    Telegram?: typeof TelegramWebApp; // Используем импортированный TelegramWebApp
- }
+    Telegram?: {
+      sendData: (data: string) => void;
+    };
+  }
 }
 
 const Game: React.FC = () => {
@@ -91,19 +89,19 @@ const Game: React.FC = () => {
   const getKeyStatus = (key: string): typeof CELL_STATUS[keyof typeof CELL_STATUS] => {
     if (key === 'Enter' || key === 'Backspace') return CELL_STATUS.UNCHECKED;
 
+    let best: typeof CELL_STATUS[keyof typeof CELL_STATUS] = CELL_STATUS.UNCHECKED;
+
     for (const row of guesses) {
       for (const cell of row) {
         if (cell.letter.toLowerCase() === key) {
-          // Возвращаем наиболее "сильный" статус для буквы
-          // CORRECT > PRESENT > ABSENT
           if (cell.status === CELL_STATUS.CORRECT) return CELL_STATUS.CORRECT;
-          if (cell.status === CELL_STATUS.PRESENT && getKeyStatus(key) !== CELL_STATUS.CORRECT) return CELL_STATUS.PRESENT;
-          // ABSENT будет возвращен, если не было CORRECT или PRESENT
+          if (cell.status === CELL_STATUS.PRESENT) best = CELL_STATUS.PRESENT;
+          if (cell.status === CELL_STATUS.ABSENT && best === CELL_STATUS.UNCHECKED) best = CELL_STATUS.ABSENT;
         }
       }
     }
-    // Если буква не встречалась, возвращаем UNECHECKED
-    return CELL_STATUS.UNCHECKED;
+
+    return best;
   };
 
   const handleKeyPress = (key: string) => {
@@ -130,10 +128,11 @@ const Game: React.FC = () => {
             {row.map((key) => (
               <Key
                 key={key}
-                char={key === 'Backspace' ? '⌫' : key === 'Enter' ? '⏎' : key}
+                char={key === 'Backspace' ? '⌫' : key === 'Enter' ? 'ВВОД' : key}
                 onClick={() => handleKeyPress(key)}
                 status={getKeyStatus(key.toLowerCase())}
                 disabled={gameOver}
+                wide={key === 'Enter' || key === 'Backspace'}
               />
             ))}
           </div>

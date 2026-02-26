@@ -1,10 +1,7 @@
 // services/gameService.ts
-import { PrismaClient, WordDictionary, DailyWord } from '../lib/generated/prisma';
+import { prisma } from '../lib/prisma';
 import { GAME_CONFIG, LetterResult, WordResult, CELL_STATUS } from '../lib/constants';
 import { z } from 'zod';
-
-// Инициализация Prisma Client
-const prisma = new PrismaClient();
 
 /**
  * Получает слово дня для конкретной даты.

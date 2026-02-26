@@ -10,12 +10,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model WordDictionary {
   id        Int        @id @default(autoincrement())
-  word      String     @unique @db.VarChar(5) // Assuming max 5 characters for a 5-letter word
+  word      String     @unique // Assuming max 5 characters for a 5-letter word
   dailyWord DailyWord[] // Relation to DailyWord
 
   @@map("word_dictionary")
@@ -23,7 +23,7 @@ model WordDictionary {
 
 model DailyWord {
   id        Int            @id @default(autoincrement())
-  date      DateTime       @unique @db.Date // Unique date for the daily word
+  date      DateTime       @unique // Unique date for the daily word
   wordId    Int            @unique
   word      WordDictionary @relation(fields: [wordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 

@@ -1,8 +1,6 @@
-// hooks/useWordle.ts
 import { useState, useEffect, useCallback } from 'react';
-import { LetterResult, WordResult, CELL_STATUS, GAME_CONFIG } from '../lib/constants';
+import { WordResult, CELL_STATUS, GAME_CONFIG } from '../lib/constants';
 
-// Тип для состояния сообщения
 interface MessageState {
   text: string;
   isVisible: boolean;
@@ -13,40 +11,22 @@ export const useWordle = () => {
   const [guesses, setGuesses] = useState<WordResult[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [gameWon, setGameWon] = useState<boolean>(false);
-  const [targetWord, setTargetWord] = useState<string>(''); // Будет получено от API
+  const [targetWord, setTargetWord] = useState<string>('');
   const [message, setMessageState] = useState<MessageState>({ text: '', isVisible: false });
-  const [loading, setLoading] = useState<boolean>(true); // Для загрузки целевого слова
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Функция для получения слова дня от API
   const fetchTargetWord = useCallback(async () => {
     try {
-      // Пока что используем фиктивный вызов, чтобы получить слово.
-      // В реальности, API может не возвращать слово напрямую, а только обрабатывать попытки.
-      // Но для инициализации игры, нам нужно знать цель.
-      // Вместо этого, мы можем инициализировать игру без знания слова,
-      // и API будет возвращать результат для каждой попытки.
-      // Тогда `targetWord` будет известен только после победы или в специальном эндпоинте.
-      // Пока оставим как есть, предполагая, что API предоставляет эндпоинт для получения слова дня.
-      // const response = await fetch('/api/target-word'); // Нужен эндпоинт для получения слова дня
-      // const data = await response.json();
-      // setTargetWord(data.word);
-
-      // Альтернатива: не получать слово, а доверять результатам от /api/guess
-      // и считать, что игра выиграна, когда последний результат - все CORRECT.
-      // Это более безопасно с точки зрения читерства.
-      // Тогда targetWord можно не хранить на клиенте.
-      // Инициализируем пустым и полагаемся на API.
-
-      // Пока инициализируем каким-то словом для тестирования
-      // setTargetWord('ТЕСТ');
-      // setLoading(false);
-
-      // Реализация без знания targetWord на клиенте:
-      setTargetWord(''); // Не храним на клиенте
+      const response = await fetch('/api/daily-word');
+      if (!response.ok) {
+        throw new Error('Failed to fetch daily word');
+      }
+      const data = await response.json();
+      setTargetWord(data.word);
       setLoading(false);
     } catch (err) {
       console.error('Failed to initialize game:', err);
-      setMessageState({ text: 'Ошибка загрузки игры', isVisible: true });
+      setMessageState({ text: 'Ошибка загрузки игры. Попробуйте обновить страницу.', isVisible: true });
       setLoading(false);
     }
   }, []);
@@ -73,59 +53,47 @@ export const useWordle = () => {
     }
 
     try {
-      // Отправляем попытку на сервер
       const response = await fetch('/api/guess', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ word: currentGuess }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Сервер вернул ошибку (например, слово не в словаре)
         setMessageState({ text: data.error || 'Неверное слово', isVisible: true });
         setTimeout(() => setMessageState(prev => ({ ...prev, isVisible: false })), 2000);
         return;
       }
 
-      // Сервер вернул успешный результат
       const resultFromServer: WordResult = data.result;
-
-      // Обновляем попытки
       setGuesses(prev => [...prev, resultFromServer]);
 
-      // Проверяем победу
       const isWon = resultFromServer.every(cell => cell.status === CELL_STATUS.CORRECT);
       if (isWon) {
         setGameWon(true);
         setGameOver(true);
-        setMessageState({ text: 'Поздравляем! Вы выиграли!', isVisible: true });
-        setTimeout(() => setMessageState(prev => ({ ...prev, isVisible: false })), 3000);
+        setMessageState({ text: 'Поздравляем! Вы угадали!', isVisible: true });
         return;
       }
 
-      // Проверяем поражение (превышено количество попыток)
       if (guesses.length + 1 >= GAME_CONFIG.MAX_ATTEMPTS) {
         setGameOver(true);
-        // В реальной игре, слово раскрывается здесь. Мы можем запросить его отдельно или знать.
-        // Пока просто сообщим о поражении.
-        setMessageState({ text: `Игра окончена! Загаданное слово: ???`, isVisible: true });
-        setTimeout(() => setMessageState(prev => ({ ...prev, isVisible: false })), 4000);
+        setMessageState({
+          text: `Игра окончена! Слово: ${targetWord.toUpperCase()}`,
+          isVisible: true,
+        });
         return;
       }
 
-      // Если игра не закончена, очищаем текущее слово
       setCurrentGuess('');
-
     } catch (err) {
       console.error('Submission error:', err);
       setMessageState({ text: 'Ошибка соединения', isVisible: true });
       setTimeout(() => setMessageState(prev => ({ ...prev, isVisible: false })), 2000);
     }
-  }, [currentGuess, guesses.length]);
+  }, [currentGuess, guesses.length, targetWord]);
 
   const resetGame = useCallback(() => {
     setCurrentGuess('');
@@ -134,13 +102,11 @@ export const useWordle = () => {
     setGameWon(false);
     setMessageState({ text: '', isVisible: false });
     setLoading(true);
-    fetchTargetWord(); // Перезапрашиваем слово дня
+    fetchTargetWord();
   }, [fetchTargetWord]);
 
-  // Функция для установки сообщения (публичный метод)
   const setMessage = useCallback((text: string) => {
     setMessageState({ text, isVisible: true });
-    // Автоматически скрываем через 2.5 секунды, если не "Поздравляем"
     if (!text.includes('Поздравляем') && !text.includes('Игра окончена')) {
       setTimeout(() => setMessageState(prev => ({ ...prev, isVisible: false })), 2500);
     }
@@ -151,15 +117,15 @@ export const useWordle = () => {
     guesses,
     gameOver,
     gameWon,
-    targetWord, // Может быть пустым, если не храним на клиенте
-    message: message.text, // Возвращаем только текст для совместимости с Game.tsx
-    showModal: message.isVisible, // Новое состояние для модального окна
-    setMessage, // Позволяет устанавливать сообщение извне
-    closeModal: () => setMessageState(prev => ({ ...prev, isVisible: false })), // Новый метод для закрытия
+    targetWord,
+    message: message.text,
+    showModal: message.isVisible,
+    setMessage,
+    closeModal: () => setMessageState(prev => ({ ...prev, isVisible: false })),
     handleChar,
     handleDelete,
     handleSubmit,
     resetGame,
-    loading, // Возвращаем состояние загрузки
+    loading,
   };
 };
